@@ -396,7 +396,7 @@ function useWidgetScript() {
     // In dev: use the Vite proxy (/widget.js) to bypass CORP header restriction
     const base = import.meta.env.DEV
       ? "/widget.js"
-      : "https://beta.shortmesh.com/widget.js";
+      : "https://authy.shortmesh.com/widget.js";
     s.src = `${base}?v=${Date.now()}`;
     document.body.appendChild(s);
   }, []);

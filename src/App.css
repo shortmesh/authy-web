@@ -8,7 +8,7 @@
 
 .app {
   width: 100%;
-  max-width: 1100px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 0 24px;
   box-sizing: border-box;
@@ -19,11 +19,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 22px;
+  padding: 6px 22px;
   background: var(--accent);
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 5px;
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -38,11 +38,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 22px;
+  padding: 6px 22px;
   background: transparent;
   color: var(--text-h);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 5px;
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -74,7 +74,7 @@
   letter-spacing: 0.08em;
   font-size: 12px;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--text);
   margin-bottom: 12px;
 }
 
@@ -196,13 +196,13 @@
 
 .hero-badge {
   display: inline-block;
-  padding: 4px 12px;
+  padding: 2px 12px;
   background: var(--accent-bg);
   color: var(--accent);
   border: 1px solid var(--accent-border);
   border-radius: 100px;
   font-size: 12px;
-  font-weight: 600;
+  /* font-weight: 600; */
   letter-spacing: 0.02em;
   margin-bottom: 24px;
 }
@@ -225,7 +225,7 @@
 .hero-code {
   background: var(--code-bg);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 5px;
   overflow: hidden;
   max-width: min(560px, 100%);
 
@@ -237,6 +237,16 @@
     line-height: 1.7;
     color: var(--text-h);
     overflow-x: auto;
+    /* Syntax highlight token colors — light mode */
+    --hl-kw:      #7c3aed;
+    --hl-str:     #15803d;
+    --hl-key:     #1d4ed8;
+    --hl-path:    #b45309;
+    --hl-fn:      #0e7490;
+    --hl-comment: #9ca3af;
+    --hl-op:      #d97706;
+    --hl-tag:     #7c3aed;
+    --hl-attr:    #1d4ed8;
   }
 }
 
@@ -248,6 +258,41 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lang-tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--border);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.lang-tab {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text);
+  padding: 3px 10px;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.lang-tab.active {
+  background: var(--bg);
+  color: var(--accent);
+}
+
+.lang-tab:not(.active):hover {
+  color: var(--text-h);
 }
 
 /* ── How it works ────────────────────────────────────────────────────────── */
@@ -258,83 +303,125 @@
   h2 {
     font-size: 32px;
     letter-spacing: -0.5px;
-    margin: 0 0 48px;
+    margin: 0;
   }
 }
 
 .how-docs {
-  margin-top: 32px;
+  margin-top: 40px;
+  text-align: center;
 }
 
-.steps-scroll {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 12px;
-  /* negative margin trick: let the scroll reach the edge of the section */
-  margin-left: -24px;
-  margin-right: -24px;
-  padding-left: 24px;
-  padding-right: 24px;
-}
-
+/* Two-column grid divided by lines */
 .steps {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 20px;
-  /* width determined by children — no grid fr-unit ambiguity */
-  width: fit-content;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin-top: 48px;
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
 }
 
 .step {
-  flex: 0 0 220px;   /* never grow, never shrink, always 220 px */
-  padding: 24px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--bg);
+  padding: 40px 36px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
+  min-width: 0; /* allow grid cell to shrink below content size */
+}
+
+/* Last step spans full width */
+.step:last-child {
+  grid-column: 1 / -1;
+  border-bottom: none;
 }
 
 .step-n {
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--text);
   letter-spacing: 0.05em;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .step h3 {
-  font-size: 15px;
+  font-size: 20px;
   font-weight: 600;
   color: var(--text-h);
-  margin: 0 0 10px;
+  margin: 0 0 12px;
 }
 
 .step p {
   font-size: 14px;
   color: var(--text);
   line-height: 1.6;
-  margin: 0 0 16px;
+  margin: 0 0 24px;
   flex: 1;
+}
+
+.step-code-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 6px;
+  opacity: 0.6;
 }
 
 .step-code {
   background: var(--code-bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px 14px;
+  border-radius: 5px;
+  padding: 16px 18px;
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 12.5px;
   color: var(--text-h);
   margin: 0;
-  min-width: 0;
   max-width: 100%;
+  box-sizing: border-box;
   overflow-x: auto;
   white-space: pre;
-  line-height: 1.65;
+  line-height: 1.7;
+  /* Syntax highlight token colors — light mode */
+  --hl-kw:      #7c3aed;
+  --hl-str:     #15803d;
+  --hl-key:     #1d4ed8;
+  --hl-path:    #b45309;
+  --hl-fn:      #0e7490;
+  --hl-comment: #9ca3af;
+  --hl-op:      #d97706;
+  --hl-tag:     #7c3aed;
+  --hl-attr:    #1d4ed8;
 }
+
+@media (prefers-color-scheme: dark) {
+  .step-code,
+  .hero-code pre {
+    --hl-kw:      #c084fc;
+    --hl-str:     #4ade80;
+    --hl-key:     #60a5fa;
+    --hl-path:    #fbbf24;
+    --hl-fn:      #22d3ee;
+    --hl-comment: #6b7280;
+    --hl-op:      #fbbf24;
+    --hl-tag:     #c084fc;
+    --hl-attr:    #60a5fa;
+  }
+}
+
+/* Syntax highlight token spans */
+.hl-kw      { color: var(--hl-kw); font-weight: 600; }
+.hl-str     { color: var(--hl-str); }
+.hl-key     { color: var(--hl-key); }
+.hl-path    { color: var(--hl-path); }
+.hl-fn      { color: var(--hl-fn); }
+.hl-comment { color: var(--hl-comment); font-style: italic; }
+.hl-op      { color: var(--hl-op); }
+.hl-tag     { color: var(--hl-tag); }
+.hl-attr    { color: var(--hl-attr); }
 
 /* ── Demo ────────────────────────────────────────────────────────────────── */
 .demo-section {
@@ -485,7 +572,7 @@
 .demo-card {
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 7px;
   padding: 32px;
   text-align: left;
   box-shadow: var(--shadow);
@@ -522,7 +609,8 @@
     gap: 0;
     border: 1px solid var(--border);
     border-radius: 8px;
-    overflow: hidden;
+    /* overflow must stay visible so the dropdown can escape the container */
+    overflow: visible;
     background: var(--code-bg);
     transition: border-color 0.15s, box-shadow 0.15s;
 
@@ -579,7 +667,7 @@
   .react-international-phone-country-selector-dropdown__list-item {
     padding: 8px 14px;
     font-size: 14px;
-    color: var(--text-h);
+    color: var(--text-h) !important;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -587,9 +675,16 @@
 
     &:hover,
     &--selected {
-      background: var(--accent-bg);
+      background: var(--accent-bg) !important;
+      color: var(--text-h) !important;
     }
   }
+}
+
+.react-international-phone-country-selector-dropdown__list-item:hover,
+.react-international-phone-country-selector-dropdown__list-item--selected {
+  background: var(--accent-bg) !important;
+  color: var(--text-h) !important;
 }
 
 .demo-input {
@@ -792,7 +887,7 @@
   flex-direction: column;
   padding: 20px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 6px;
   text-decoration: none;
   background: var(--bg);
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -821,7 +916,7 @@
   font-weight: 600;
   padding: 2px 8px;
   background: var(--accent-bg);
-  color: var(--accent);
+  color: var(--text);
   border-radius: 100px;
 }
 
@@ -900,6 +995,11 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .steps { grid-template-columns: 1fr; border-left: none; border-top: none; margin-top: 32px; }
+  .step { border-right: none; border-bottom: none; border-top: 1px solid var(--border); padding: 36px 0; }
+  .step:first-child { border-top: none; }
+  .step:last-child { grid-column: auto; }
+
   #root {
     border-inline: none;
   }
@@ -929,6 +1029,9 @@
   .how, .demo-section, .repos { padding: 56px 0; }
   .how h2, .demo-section h2, .repos h2 { font-size: 26px; }
   .how-docs { text-align: center; }
+
+  /* How it works: already 1-col from 960px; just adjust padding */
+  .step { padding: 32px 0; }
 
   /* Demo */
   .demo-card { padding: 24px 20px; }

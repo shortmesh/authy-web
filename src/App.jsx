@@ -40,8 +40,31 @@ function Nav() {
   );
 }
 
+// Code content is hardcoded constants — dangerouslySetInnerHTML is safe here.
+const HERO_SNIPPETS = {
+  js: `// Drop-in widget — no build step
+<script src="https://beta.shortmesh.com/widget.js"></script>
+ShortMeshWidget.open({
+  endpoints: { platforms: "/api/platforms" },
+  onSelect: (platform) => {
+    sendOTP(phoneNumber, platform)
+  },
+})`,
+  kotlin: `// Add to your Activity or Fragment
+ShortMeshWidget.open(
+  context = this,
+  config = WidgetConfig(
+    platforms = "/api/platforms",
+    onSelect = { platform ->
+      sendOTP(phoneNumber, platform)
+    }
+  )
+)`,
+};
+
 // ─── Hero ────────────────────────────────────────────────────────────────────
 function Hero() {
+  const [heroLang, setHeroLang] = useState("js");
   return (
     <section className="hero">
       <div className="hero-content">
@@ -54,7 +77,7 @@ function Hero() {
         <p className="hero-sub">
           Authy is an open-source OTP service that generates, delivers, and
           verifies one-time passwords over the messaging platforms your users
-          already trust, starting with WhatsApp.
+          already trust.
         </p>
         <div className="hero-actions">
           <a
@@ -70,15 +93,21 @@ function Hero() {
           </a>
         </div>
         <div className="hero-code">
-          <div className="code-label">Drop-in widget · zero dependencies</div>
-          <pre>
-            <code>{`ShortMeshWidget.open({
-  endpoints: { platforms: "/api/platforms" },
-  onSelect: (platform) => {
-    sendOTP(phoneNumber, platform)
-  },
-})`}</code>
-          </pre>
+          <div className="code-label">
+            <span>Drop-in widget · zero dependencies</span>
+            <div className="lang-tabs">
+              <button
+                className={`lang-tab${heroLang === "js" ? " active" : ""}`}
+                onClick={() => setHeroLang("js")}
+              >JS</button>
+              <button
+                className={`lang-tab${heroLang === "kotlin" ? " active" : ""}`}
+                onClick={() => setHeroLang("kotlin")}
+              >Kotlin</button>
+            </div>
+          </div>
+          {/* content is hardcoded constants, not user input */}
+          <pre dangerouslySetInnerHTML={{ __html: highlight(HERO_SNIPPETS[heroLang], heroLang) }} />
         </div>
       </div>
 
@@ -106,7 +135,13 @@ const STEPS = [
     n: "01",
     title: "Host Your Instance",
     body: "Deploy the Interface API and your own Authy instance. Both are open-source and self-hostable - you own the infrastructure and the data.",
+    lang: "shell",
+    codeLabel: "Authy-API",
     code: `git clone https://github.com/shortmesh/Authy-API
+make setup && make migrate-up
+make run`,
+    code2Label: "Interface-API",
+    code2: `git clone https://github.com/shortmesh/Interface-API.git
 make setup && make migrate-up
 make run`,
   },
@@ -114,6 +149,7 @@ make run`,
     n: "02",
     title: "Add Your Device",
     body: "Link a WhatsApp account (or other platform) to your Interface API. This is the sender account your users will receive OTPs from.",
+    lang: "http",
     code: `POST /api/v1/devices
 {
   "platform": "wa",
@@ -124,6 +160,7 @@ make run`,
     n: "03",
     title: "Embed the Widget",
     body: "Drop one script tag into your page, no build step, no dependencies. The ShortMesh Widget handles the platform-picker UI completely out of the box.",
+    lang: "html",
     code: `<script src="https://beta.shortmesh.com/widget.js">
 </script>`,
   },
@@ -131,6 +168,7 @@ make run`,
     n: "04",
     title: "User Picks a Platform",
     body: "The widget fetches available platforms from your API and shows a clean modal. The user selects their preferred messaging app to receive the code.",
+    lang: "js",
     code: `onSelect: (platform) => {
   // "wa" | "telegram" | "signal"
   sendOTP(phone, platform)
@@ -140,29 +178,97 @@ make run`,
     n: "05",
     title: "Send & Verify the OTP",
     body: "Your hosted Authy API generates and delivers the code. The user enters it and you verify phone number, job done.",
+    lang: "http",
     code: `POST /api/v1/otp/generate
 POST /api/v1/otp/verify`,
   },
 ];
+
+// Code content is hardcoded constants — dangerouslySetInnerHTML is safe here.
+function highlight(raw, lang) {
+  let s = raw
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  if (lang === "shell") {
+    s = s
+      .replace(/(https?:\/\/\S+)/g, '<span class="hl-str">$1</span>')
+      .replace(/^(git|make)\b/gm, '<span class="hl-kw">$1</span>')
+      .replace(/\b(clone|setup|migrate-up|run)\b/g, '<span class="hl-fn">$1</span>')
+      .replace(/(&amp;&amp;)/g, '<span class="hl-op">$1</span>');
+  }
+
+  if (lang === "http") {
+    s = s
+      .replace(/^(POST|GET|PUT|DELETE|PATCH)\b/gm, '<span class="hl-kw">$1</span>')
+      .replace(/(\/(api|v1)[^\s]*)/g, '<span class="hl-path">$1</span>')
+      .replace(/"([^"]+)"(\s*:)/g, '<span class="hl-key">"$1"</span>$2')
+      .replace(/:\s*"([^"]+)"/g, ': <span class="hl-str">"$1"</span>');
+  }
+
+  if (lang === "html") {
+    s = s
+      .replace(/="(https?:\/\/[^"]+)"/g, '=<span class="hl-str">"$1"</span>')
+      .replace(/&lt;(\/?[a-z]+)/gi, '&lt;<span class="hl-tag">$1</span>');
+  }
+
+  if (lang === "js") {
+    const saved = [];
+    s = s.replace(/\/\/[^\n]*/g, (m) => { saved.push(m); return "\x01"; });
+    s = s
+      .replace(/"([^"]*)"/g, '<span class="hl-str">"$1"</span>')
+      .replace(/\b(\w+)(?=\s*:)/g, '<span class="hl-key">$1</span>')
+      .replace(/=&gt;/g, '<span class="hl-op">=&gt;</span>')
+      .replace(/\b(ShortMeshWidget|sendOTP)\b/g, '<span class="hl-fn">$1</span>');
+    s = s.replace(/\x01/g, () => `<span class="hl-comment">${saved.shift()}</span>`);
+  }
+
+  if (lang === "kotlin") {
+    const saved = [];
+    s = s.replace(/\/\/[^\n]*/g, (m) => { saved.push(m); return "\x01"; });
+    s = s
+      .replace(/"([^"]*)"/g, '<span class="hl-str">"$1"</span>')
+      .replace(/\b(\w+)(\s+=\s)/g, '<span class="hl-attr">$1</span>$2')
+      .replace(/\b(import|val|var|fun|object|return|this)\b/g, '<span class="hl-kw">$1</span>')
+      .replace(/-&gt;/g, '<span class="hl-op">-&gt;</span>')
+      .replace(/\b(ShortMeshWidget|WidgetConfig|sendOTP)\b/g, '<span class="hl-fn">$1</span>');
+    s = s.replace(/\x01/g, () => `<span class="hl-comment">${saved.shift()}</span>`);
+  }
+
+  return s;
+}
 
 function HowItWorks() {
   return (
     <section className="how" id="how">
       <div className="section-label">How it works</div>
       <h2>From embed to verified in five steps</h2>
-      <div className="steps-scroll">
-        <div className="steps">
-          {STEPS.map((s) => (
-            <div className="step" key={s.n}>
-              <div className="step-n">{s.n}</div>
-              <h3>{s.title}</h3>
-              <p>{s.body}</p>
-              <pre className="step-code">
-                <code>{s.code}</code>
-              </pre>
-            </div>
-          ))}
-        </div>
+      <div className="steps">
+        {STEPS.map((s) => (
+          <div className="step" key={s.n}>
+            <div className="step-n">{s.n}</div>
+            <h3>{s.title}</h3>
+            <p>{s.body}</p>
+            {/* content is hardcoded constants, not user input */}
+            {s.codeLabel && (
+              <div className="step-code-label">{s.codeLabel}</div>
+            )}
+            <pre
+              className="step-code"
+              dangerouslySetInnerHTML={{ __html: highlight(s.code, s.lang) }}
+            />
+            {s.code2 && (
+              <>
+                <div className="step-code-label" style={{ marginTop: "12px" }}>{s.code2Label}</div>
+                <pre
+                  className="step-code"
+                  dangerouslySetInnerHTML={{ __html: highlight(s.code2, s.lang) }}
+                />
+              </>
+            )}
+          </div>
+        ))}
       </div>
       <div className="how-docs">
         <a
@@ -326,7 +432,7 @@ function Demo() {
       onSelect: (chosenPlatform) => {
         // Pick the first device registered for the chosen platform
         const match = platformsRef.current.find(
-          (p) => p.platform === chosenPlatform
+          (p) => p.platform === chosenPlatform,
         );
         const deviceId = match?.device_id ?? "";
         setPlatform(chosenPlatform);
@@ -358,7 +464,15 @@ function Demo() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Verification failed");
+      if (!res.ok) {
+        const msg =
+          data?.message ||
+          data?.error ||
+          data?.detail ||
+          (typeof data === "string" ? data : null) ||
+          `Verification failed (${res.status})`;
+        throw new Error(msg);
+      }
       setStage("success");
     } catch (err) {
       setError(err.message);

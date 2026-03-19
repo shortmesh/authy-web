@@ -8,7 +8,7 @@ export default defineConfig({
     proxy: {
       // Proxy the widget script itself
       '/widget.js': {
-        target: 'https://beta.shortmesh.com',
+        target: 'https://authy.shortmesh.com',
         changeOrigin: true,
         secure: true,
       },
@@ -16,17 +16,17 @@ export default defineConfig({
       // In dev, document.currentScript.src resolves to localhost, so these
       // paths would 404 without this proxy.
       '/WhatsApp.svg': {
-        target: 'https://beta.shortmesh.com',
+        target: 'https://authy.shortmesh.com',
         changeOrigin: true,
         secure: true,
       },
       '/Logo.svg': {
-        target: 'https://beta.shortmesh.com',
+        target: 'https://authy.shortmesh.com',
         changeOrigin: true,
         secure: true,
       },
       '/Signal-Logo.svg': {
-        target: 'https://beta.shortmesh.com',
+        target: 'https://authy.shortmesh.com',
         changeOrigin: true,
         secure: true,
       },

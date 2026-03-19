@@ -63,11 +63,11 @@ function Hero() {
 
       <div className="hero-visual">
         <div className="hero-demo-panel">
-          <img
+          {/* <img
             src="https://raw.githubusercontent.com/shortmesh/Widgets/main/1.svg"
             alt="ShortMesh widget platform picker"
             className="hero-widget-badge"
-          />
+          /> */}
           <DemoCard />
           <p className="demo-privacy">
             We do not collect or store phone numbers submitted in this demo.

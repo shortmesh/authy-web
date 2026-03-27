@@ -495,7 +495,15 @@ function DemoCard() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to send OTP");
+      if (!res.ok) {
+        const raw =
+          data?.message ||
+          data?.error ||
+          data?.detail ||
+          (typeof data === "string" ? data : null) ||
+          `HTTP ${res.status}`;
+        throw new Error(`Server response: ${raw}`);
+      }
       setStage("verify");
     } catch (err) {
       setError(err.message);
@@ -564,13 +572,13 @@ function DemoCard() {
       });
       const data = await res.json();
       if (!res.ok) {
-        const msg =
+        const raw =
           data?.message ||
           data?.error ||
           data?.detail ||
           (typeof data === "string" ? data : null) ||
-          `Verification failed (${res.status})`;
-        throw new Error(msg);
+          `HTTP ${res.status}`;
+        throw new Error(`Server response: ${raw}`);
       }
       setStage("success");
     } catch (err) {

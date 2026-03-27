@@ -662,7 +662,7 @@
     margin: 0 0 8px;
   }
 
-  p {
+  p:not(.demo-error) {
     color: var(--text);
     font-size: 15px;
     line-height: 1.6;

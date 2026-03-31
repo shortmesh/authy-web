@@ -39,15 +39,11 @@ function Hero() {
     <section className="hero">
       <div className="hero-content">
         <div className="hero-badge">Phone Number Verification</div>
-        <h1>
-          Add phone number verification.
-          <br />
-          You own the data, we do the heavy lifting
-        </h1>
+        <h1>Authy - Shortmesh</h1>
         <p className="hero-sub">
           Authy is an open-source OTP service that generates, delivers, and
           verifies one-time passwords over the messaging platforms your users
-          already trust.
+          already trust using the Shortmesh API
         </p>
         <div className="hero-actions">
           <a

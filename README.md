@@ -1,6 +1,6 @@
 # authy-web
 
-[Authy by ShortMesh](https://github.com/shortmesh/Authy-API) — an open-source, self-hostable OTP (one-time password) service that delivers verification codes over WhatsApp, Telegram, and Signal.
+[Authy by ShortMesh](https://github.com/shortmesh/Authy-API) — Authy is an open-source OTP service that generates, delivers, and verifies one-time passwords over the messaging platforms your users already trust using the Shortmesh API
 
 Built with **React 19 + Vite 8**.
 
@@ -15,9 +15,9 @@ Built with **React 19 + Vite 8**.
 
 ## How the demo was implemented
 
-### 1. Widget script loading (`useWidgetScript`)
+###  Widget script loading (`useWidgetScript`)
 
-The ShortMesh widget (`widget.js`) is a plain JS drop-in served directly from the Authy API server. Instead of a static `<script>` tag in `index.html`, we load it dynamically at runtime so the latest version is always fetched:
+The ShortMesh widget (`widget.js`) is a plain JS drop-in served from Authy. Instead of a static `<script>` tag in `index.html`, Load it dynamically at runtime so the latest version is always fetched:
 
 ```js
 const s = document.createElement("script");
@@ -27,23 +27,11 @@ s.src = import.meta.env.DEV
 document.body.appendChild(s);
 ```
 
-### 2. Dev-server proxy (`vite.config.js`)
-
-The widget script and its bundled SVG icons are served from `beta.shortmesh.com` with a `Cross-Origin-Resource-Policy` header that blocks direct `<script src>` fetches from a different origin. During local development, Vite transparently proxies these paths:
-
-| Path | Proxied to |
-|---|---|
-| `/widget.js` | `https://beta.shortmesh.com/widget.js` |
-| `/WhatsApp.svg` | `https://beta.shortmesh.com/WhatsApp.svg` |
-| `/Signal-Logo.svg` | `https://beta.shortmesh.com/Signal-Logo.svg` |
-| `/Logo.svg` | `https://beta.shortmesh.com/Logo.svg` |
-
-
-### 3. Phone input (`react-international-phone`)
+###  Phone input (`react-international-phone`)
 
 `react-international-phone` provides the country-flag selector and E.164 phone number formatting. The component enforces a valid `+<country><number>` pattern before the OTP flow can proceed.
 
-### 4. Platform picker (`ShortMeshWidget`)
+###  Platform picker (`ShortMeshWidget`)
 
 When the user submits their phone number, we first fetch the `/platforms` endpoint to get a list of registered sender devices and cache them in a `ref`:
 
@@ -52,7 +40,7 @@ const res = await fetch(`${API_BASE}/platforms`);
 platformsRef.current = await res.json(); // [{ platform: "wa", device_id: "..." }, ...]
 ```
 
-We then open the widget modal:
+Open the widget modal:
 
 ```js
 window.ShortMeshWidget.open({
@@ -66,7 +54,7 @@ window.ShortMeshWidget.open({
 
 The widget renders the platform picker UI; on selection the `onSelect` callback fires and we immediately call the generate endpoint.
 
-### 5. OTP flow (generate → verify)
+###  OTP flow (generate → verify)
 
 The demo card cycles through four stages managed with a single `stage` state variable:
 
@@ -91,7 +79,7 @@ POST {API_BASE}/otp/verify
 
 `API_BASE` is injected at build time via the `VITE_API_BASE_URL` environment variable.
 
-### 6. OTP input (`OTPInputs`)
+###  OTP input (`OTPInputs`)
 
 A custom 6-box OTP input that:
 - Auto-advances focus to the next box on digit entry
@@ -99,9 +87,6 @@ A custom 6-box OTP input that:
 - Handles paste of a full 6-digit code
 - Uses `autocomplete="one-time-code"` on the first box for mobile autofill
 
-### 7. Syntax highlighting
-
-Code snippets in the "How it works" section are highlighted without any external library. A small `highlight(raw, lang)` function uses regex substitutions to wrap tokens in `<span class="hl-*">` elements. `dangerouslySetInnerHTML` is safe here because every snippet is a **hardcoded constant** in the source — no user input is ever passed through the highlighter.
 
 ---
 

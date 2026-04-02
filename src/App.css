@@ -19,11 +19,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 22px;
+  padding: 6px 32px;
   background: var(--accent);
   color: #fff;
   border: none;
-  border-radius: 5px;
+  border-radius: 3px;
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -124,7 +124,7 @@
 
 /* ── Hero ────────────────────────────────────────────────────────────────── */
 .hero {
-  padding: 99px 0 92px;
+  padding: 120px 0 110px;
   display: flex;
   align-items: center;
   gap: 64px;
@@ -656,13 +656,13 @@
   box-shadow: var(--shadow);
 
   h3 {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
     color: var(--text-h);
-    margin: 0 0 8px;
+    margin: 0 0 18px;
   }
 
-  p {
+  p:not(.demo-error) {
     color: var(--text);
     font-size: 15px;
     line-height: 1.6;

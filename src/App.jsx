@@ -39,15 +39,11 @@ function Hero() {
     <section className="hero">
       <div className="hero-content">
         <div className="hero-badge">Phone Number Verification</div>
-        <h1>
-          Add phone number verification.
-          <br />
-          You own the data, we do the heavy lifting
-        </h1>
+        <h1>Authy - Shortmesh</h1>
         <p className="hero-sub">
           Authy is an open-source OTP service that generates, delivers, and
           verifies one-time passwords over the messaging platforms your users
-          already trust.
+          already trust using the Shortmesh API
         </p>
         <div className="hero-actions">
           <a
@@ -495,7 +491,15 @@ function DemoCard() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to send OTP");
+      if (!res.ok) {
+        const raw =
+          data?.message ||
+          data?.error ||
+          data?.detail ||
+          (typeof data === "string" ? data : null) ||
+          `HTTP ${res.status}`;
+        throw new Error(`Server response: ${raw}`);
+      }
       setStage("verify");
     } catch (err) {
       setError(err.message);
@@ -564,13 +568,13 @@ function DemoCard() {
       });
       const data = await res.json();
       if (!res.ok) {
-        const msg =
+        const raw =
           data?.message ||
           data?.error ||
           data?.detail ||
           (typeof data === "string" ? data : null) ||
-          `Verification failed (${res.status})`;
-        throw new Error(msg);
+          `HTTP ${res.status}`;
+        throw new Error(`Server response: ${raw}`);
       }
       setStage("success");
     } catch (err) {

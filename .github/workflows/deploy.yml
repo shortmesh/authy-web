@@ -46,7 +46,7 @@ jobs:
           source: "dist/*"
           target: ${{ secrets.BUILD_PATH }}
           strip_components: 1
-          rm: true
+          rm: false
 
       - name: Execute Remote SSH Commands
         uses: appleboy/ssh-action@master

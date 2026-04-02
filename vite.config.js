@@ -15,17 +15,17 @@ export default defineConfig({
       // Proxy the platform icons the widget loads relative to its own origin.
       // In dev, document.currentScript.src resolves to localhost, so these
       // paths would 404 without this proxy.
-      '/WhatsApp.svg': {
+      '/Whatsapp.svg': {
         target: 'https://authy.shortmesh.com',
         changeOrigin: true,
         secure: true,
       },
-      '/Logo.svg': {
+      '/Telegram.svg': {
         target: 'https://authy.shortmesh.com',
         changeOrigin: true,
         secure: true,
       },
-      '/Signal-Logo.svg': {
+      '/Signal.svg': {
         target: 'https://authy.shortmesh.com',
         changeOrigin: true,
         secure: true,
